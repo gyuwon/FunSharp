@@ -4,7 +4,9 @@ namespace FunSharp
 {
     public static class Functions
     {
-        public static IList<T> Cons<T>(T h, IList<T> t) => new Cons<T>(h, t);
+        public static IList<T> Cons<T>(T h, IList<T> t) => new Cons<T>(h, () => t);
+
+        public static IList<T> Cons<T>(T h, Func<IList<T>> t) => new Cons<T>(h, t);
 
         public static U Foldr<T, U>(Func<T, U, U> f, U x, IList<T> list) => list.Process(
             forNil: () => x,
