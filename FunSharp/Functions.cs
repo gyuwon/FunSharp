@@ -49,5 +49,27 @@ namespace FunSharp
 
         public static Func<ITree<T>, ITree<U>> Maptree<T, U>(Func<T, U> f)
             => tree => Foldtree(Compose<T, U, IList<ITree<U>>, ITree<U>>(Node, f), Cons, Nil<ITree<U>>.Instance, tree);
+
+        public static double Next(double n, double x) => (x + n / x) / 2;
+
+        public static IList<T> Repeat<T>(Func<T, T> f, T a) => Cons(a, () => Repeat(f, f(a)));
+
+        public static double Within(double eps, IList<double> a_b_rest) => a_b_rest.Process(
+            forNil: () => throw new NotSupportedException(),
+            forCons: (a, b_rest) => b_rest.Process(
+                forNil: () => throw new NotSupportedException(),
+                forCons: (b, rest) => Math.Abs(a - b) <= eps ? b : Within(eps, Cons(b, rest))));
+
+        public static double Sqrt(double a0, double eps, double n)
+            => Within(eps, Repeat(x => Next(n, x), a0));
+
+        public static double Relative(double eps, IList<double> a_b_rest) => a_b_rest.Process(
+            forNil: () => throw new NotSupportedException(),
+            forCons: (a, b_rest) => b_rest.Process(
+                forNil: () => throw new NotSupportedException(),
+                forCons: (b, rest) => Math.Abs(a / b - 1) <= eps ? b : Relative(eps, Cons(b, rest))));
+
+        public static double Relativesqrt(double a0, double eps, double n)
+            => Relative(eps, Repeat(x => Next(n, x), a0));
     }
 }

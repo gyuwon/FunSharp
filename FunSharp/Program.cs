@@ -41,6 +41,12 @@ namespace FunSharp
 
             // 2 4 6 8 
             WriteLine(Labels(Maptree(Double)(tree)));
+
+            // 32
+            Console.WriteLine(Sqrt(a0: 10, eps: double.Epsilon, n: 1024));
+
+            // 32
+            Console.WriteLine(Relativesqrt(a0: 10, eps: double.Epsilon, n: 1024));
         }
 
         public static void Write<T>(IList<T> list) => list.Process<object>(
