@@ -47,6 +47,13 @@ namespace FunSharp
 
             // 32
             Console.WriteLine(Relativesqrt(a0: 10, eps: double.Epsilon, n: 1024));
+
+            // 0.25
+            Func<double, double> f = Math.Log;
+            Console.WriteLine(Within(double.Epsilon, Differentiate(h0: 1, f, x: 4)));
+            Console.WriteLine(Within(double.Epsilon, Improve(Differentiate(h0: 1, f, x: 4))));
+            Console.WriteLine(Within(double.Epsilon, Improve(Improve(Improve(Differentiate(h0: 1, f, x: 4))))));
+            Console.WriteLine(Within(double.Epsilon, Super(Differentiate(h0: 1, f, x: 4))));
         }
 
         public static void Write<T>(IList<T> list) => list.Process<object>(

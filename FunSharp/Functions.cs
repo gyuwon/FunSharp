@@ -62,7 +62,7 @@ namespace FunSharp
             forNil: () => throw new NotSupportedException(),
             forCons: (a, b_rest) => b_rest.Process(
                 forNil: () => throw new NotSupportedException(),
-                forCons: (b, rest) => Math.Abs(a - b) <= eps ? b : Within(eps, Cons(b, rest))));
+                forCons: (b, rest) => double.IsNaN(b) ? a : Math.Abs(a - b) <= eps ? b : Within(eps, Cons(b, rest))));
 
         public static double Sqrt(double a0, double eps, double n)
             => Within(eps, Repeat(x => Next(n, x), a0));
@@ -75,5 +75,43 @@ namespace FunSharp
 
         public static double Relativesqrt(double a0, double eps, double n)
             => Relative(eps, Repeat(x => Next(n, x), a0));
+
+        public static double Easydiff(Func<double, double> f, double x, double h)
+            => (f(x + h) - f(x)) / h;
+
+        public static Func<double, double> Easydiff(Func<double, double> f, double x)
+            => h => Easydiff(f, x, h);
+
+        public static double Halve(double x) => x / 2;
+
+        public static IList<double> Differentiate(double h0, Func<double, double> f, double x)
+            => Map(Easydiff(f, x))(Repeat(Halve, h0));
+
+        public static IList<double> Elimerror(double n, IList<double> a_b_rest) => a_b_rest.Process(
+            forNil: () => throw new NotSupportedException(),
+            forCons: (a, b_rest) => b_rest.Process(
+                forNil: () => throw new NotSupportedException(),
+                forCons: (b, rest) => Cons((b * Math.Pow(2, n) - a) / (Math.Pow(2, n) - 1), () => Elimerror(n, Cons(b, () => rest)))));
+
+        public static double Round(double x) => Math.Round(x);
+
+        public static double Order(IList<double> a_b_c_rest) => a_b_c_rest.Process(
+            forNil: () => throw new NotSupportedException(),
+            forCons: (a, b_c_rest) => b_c_rest.Process(
+                forNil: () => throw new NotSupportedException(),
+                forCons: (b, c_rest) => c_rest.Process(
+                    forNil: () => throw new NotSupportedException(),
+                    forCons: (c, rest) => a == b ? 1.0 : Round(Math.Log2((a - c) / (b - c) - 1)))));
+
+        public static IList<double> Improve(IList<double> s) => Elimerror(Order(s), s);
+
+        public static double Second(IList<double> a_b_rest) => a_b_rest.Process(
+            forNil: () => throw new NotSupportedException(),
+            forCons: (a, b_rest) => b_rest.Process(
+                forNil: () => throw new NotSupportedException(),
+                forCons: (b, rest) => b));
+
+        public static IList<double> Super(IList<double> s)
+            => Map<IList<double>, double>(Second)(Repeat(Improve, s));
     }
 }
