@@ -15,7 +15,7 @@ namespace FunSharp
             WriteLine(Append(Span.Create(1, 2), Span.Create(3, 4)));
 
             // 2 4 6 
-            WriteLine(DoubleAll(Span.Create(1, 2, 3)));
+            WriteLine(Doubleall(Span.Create(1, 2, 3)));
 
             // 45
             Console.WriteLine(Summatrix(

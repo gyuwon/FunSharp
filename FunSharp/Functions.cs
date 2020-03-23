@@ -12,6 +12,10 @@ namespace FunSharp
             forNil: () => x,
             forCons: (a, l) => f(a, Foldr(f, x, l)));
 
+        public static U Foldr<T, U>(Func<T, Func<U>, U> f, Func<U> x, IList<T> list) => list.Process(
+            forNil: () => x(),
+            forCons: (a, l) => f(a, () => Foldr(f, x, l)));
+
         public static Func<int, int, int> Add => (x, y) => x + y;
 
         public static Func<IList<int>, int> Sum => l => Foldr(Add, 0, l);
@@ -27,9 +31,9 @@ namespace FunSharp
         public static Func<int, int> Double => n => 2 * n;
 
         public static Func<IList<T>, IList<U>> Map<T, U>(Func<T, U> f)
-            => list => Foldr(Compose<T, U, IList<U>, IList<U>>(Cons, f), Nil<U>.Instance, list);
+            => list => Foldr(Compose<T, U, Func<IList<U>>, IList<U>>(Cons, f), () => Nil<U>.Instance, list);
 
-        public static Func<IList<int>, IList<int>> DoubleAll => Map(Double);
+        public static Func<IList<int>, IList<int>> Doubleall => Map(Double);
 
         public static Func<IList<IList<int>>, int> Summatrix
             => Compose<IList<IList<int>>, IList<int>, int, int>(Sum, Map(Sum));
